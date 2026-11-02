@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f4f1e8">
+  <link rel="apple-touch-icon" sizes="512x512" href="/apple-touch-icon-metro.png">
   <title>Prochains métros · Créteil–Université · ligne 8</title>
   <style>
     :root { color-scheme: light; --ink:#101b2a; --paper:#f4f1e8; --yellow:#f6c72e; --orange:#be418b; --green:#51b78a; }
@@ -75,7 +76,7 @@
         <div class="status"><span class="dot"></span><span id="status">Connexion IDF Mobilités à configurer</span><button id="openSettings" type="button">Configurer</button></div>
       </aside>
     </section>
-    <footer class="bottom"><span>Métro 8 · Créteil–Université → Balard</span><a href="https://paris-mobilites.fr/arret/creteil-universite" target="_blank" rel="noreferrer">Infos sur la station ↗</a><span class="foot-right">Actualisé <time id="updated">—</time></span></footer>
+    <footer class="bottom"><span>Métro 8 · Créteil–Université → Balard</span><a href="https://paris-mobilites.fr/arret/creteil-universite" target="_blank" rel="noreferrer">Infos sur la station ↗</a><span class="foot-right">Mis à jour <time id="updated">—</time></span></footer>
   </main>
   <dialog id="settings">
     <form method="dialog" id="settingsForm">
@@ -89,7 +90,7 @@
   <script>
     const API_URL = 'https://prim.iledefrance-mobilites.fr/marketplace/requete-ligne?LineRef=STIF%3ALine%3A%3AC01378%3A';
     const API_KEY_NAME = 'idfm_prim_api_key';
-    const REFRESH_MS = 5000;
+    const REFRESH_MS = 10000;
     // Quai IDFM de Créteil–Université desservi vers Balard.
     const CRETEIL_UNIVERSITE_BALARD_STOP = 'STIF:StopPoint:Q:463167:';
     const $ = id => document.getElementById(id);
@@ -99,6 +100,12 @@
     const textOf = value => asArray(value).map(item => typeof item === 'string' ? item : item?.value || '').join(' ').trim();
     const normal = value => (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     let refreshInProgress = false;
+    let lastUpdatedAt = null;
+    function updateElapsed() {
+      if (!lastUpdatedAt) { $('updated').textContent = '—'; return; }
+      const seconds = Math.floor((Date.now() - lastUpdatedAt) / 1000);
+      $('updated').textContent = seconds < 5 ? 'à l’instant' : seconds < 60 ? `il y a ${seconds} s` : `il y a ${Math.floor(seconds / 60)} min${seconds % 60 ? ` ${seconds % 60} s` : ''}`;
+    }
     function showError(message) { $('status').textContent = message; $('message').textContent = 'Les prochains métros vers Balard apparaîtront dès que la connexion IDFM répondra.'; }
     function collectVisits(payload) {
       const root = payload?.Siri?.ServiceDelivery || payload?.siri?.ServiceDelivery || payload?.ServiceDelivery || payload;
@@ -132,9 +139,8 @@
         $('d' + (index + 1)).textContent = visit.destination;
       });
       if (visits.length === 1) { $('m2').textContent = '—'; $('u2').textContent = 'min'; }
-      $('status').textContent = 'Horaires IDFM · actualisation toutes les 5 s';
+      $('status').textContent = 'Horaires IDFM · temps réel';
       $('message').textContent = 'Prochains passages estimés du métro 8 en direction de Balard.';
-      $('updated').textContent = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
     }
     async function refresh() {
       if (refreshInProgress) return;
@@ -145,7 +151,10 @@
       try {
         const response = await fetch(API_URL, { headers: { 'Accept':'application/json', 'apikey':key } });
         if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? 'Clé API refusée ou accès PRIM non activé' : `Erreur IDFM (${response.status})`);
-        render(collectVisits(await response.json()));
+        const payload = await response.json();
+        lastUpdatedAt = Date.now();
+        updateElapsed();
+        render(collectVisits(payload));
       } catch (error) {
         showError(error instanceof TypeError ? 'API inaccessible depuis ce navigateur' : error.message);
       } finally {
@@ -153,7 +162,7 @@
       }
     }
     $('clock').textContent = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-    setInterval(() => { $('clock').textContent = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); }, 1000);
+    setInterval(() => { $('clock').textContent = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); updateElapsed(); }, 1000);
     $('openSettings').addEventListener('click', () => { $('apiKey').value = getKey(); dialog.showModal(); });
     $('cancelSettings').addEventListener('click', () => dialog.close());
     $('removeKey').addEventListener('click', () => { try { localStorage.removeItem(API_KEY_NAME); } catch {} $('apiKey').value = ''; dialog.close(); showError('Clé API supprimée de ce navigateur'); });
