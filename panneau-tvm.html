@@ -110,8 +110,11 @@
     const API_URL = 'https://prim.iledefrance-mobilites.fr/marketplace/requete-ligne?LineRef=STIF%3ALine%3A%3AC01071%3A';
     const API_KEY_NAME = 'idfm_prim_api_key';
     const REFRESH_MS = 17000;
-    // Arrêt Église de Créteil sur le TVM, direction Gare de la Croix de Berny.
-    const STOP_NAME = 'eglise';
+    // Quais TVM de l'arrêt Église de Créteil, un identifiant par direction.
+    const STOP_REFS = {
+      croix: 'STIF:StopPoint:Q:26539:',
+      saintMaur: 'STIF:StopPoint:Q:36937:'
+    };
     const $ = id => document.getElementById(id);
     const dialog = $('settings');
     const getKey = () => { try { return localStorage.getItem(API_KEY_NAME) || ''; } catch { return ''; } };
@@ -133,18 +136,16 @@
         .flatMap(frame => asArray(frame?.EstimatedVehicleJourney));
       const found = { croix: [], saintMaur: [] };
       for (const journey of journeys) {
-        const direction = textOf(journey?.DirectionName);
-        const normalizedDirection = normal(direction);
-        const directionKey = normalizedDirection.includes('croix de berny') ? 'croix'
-          : normalizedDirection.includes('saint maur') || normalizedDirection.includes('saint maur creteil') ? 'saintMaur'
-          : null;
-        if (!directionKey) continue;
+        const direction = normal(textOf(journey?.DirectionName));
+        const journeyDirection = direction.includes('croix de berny') ? 'croix'
+          : direction.includes('saint maur') ? 'saintMaur' : null;
+        if (!journeyDirection) continue;
         const calls = asArray(journey?.EstimatedCalls?.EstimatedCall || journey?.EstimatedCall);
         for (const call of calls) {
-          // Sur le TVM, la réponse peut donner le nom de l'arrêt plutôt que le quai ;
-          // le filtre par ligne et direction limite cette recherche à la bonne course.
-          const stopName = textOf(call?.StopPointName) || textOf(call?.StopPoint?.Name);
-          if (!normal(stopName).includes(STOP_NAME)) continue;
+          // IDFM ne fournit pas toujours le nom du quai : on filtre par sa référence exacte.
+          const stopRef = textOf(call?.StopPointRef);
+          const directionKey = Object.keys(STOP_REFS).find(key => STOP_REFS[key] === stopRef);
+          if (!directionKey || directionKey !== journeyDirection) continue;
           const date = call?.ExpectedDepartureTime || call?.ExpectedArrivalTime || call?.AimedDepartureTime || call?.AimedArrivalTime;
           const timestamp = date ? Date.parse(date) : NaN;
           if (!Number.isFinite(timestamp) || timestamp < Date.now() - 60000) continue;
