@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f1e8">
+  <title>Prochains métros · Créteil–Université · ligne 8</title>
+  <style>
+    :root { color-scheme: light; --ink:#101b2a; --paper:#f4f1e8; --yellow:#f6c72e; --orange:#be418b; --green:#51b78a; }
+    * { box-sizing:border-box }
+    html,body { width:100%; min-height:100%; margin:0 }
+    body { display:grid; place-items:center; background:#d9d7d0; padding:clamp(12px,3vw,42px); font-family:Arial,Helvetica,sans-serif; color:var(--ink) }
+    .board { width:min(1200px,100%); overflow:hidden; border-radius:9px; background:var(--paper); box-shadow:0 22px 65px #18233338; border:1px solid #17233835 }
+    .top { min-height:clamp(96px,17vw,176px); display:flex; align-items:center; gap:clamp(12px,2.4vw,30px); padding:clamp(16px,3vw,34px) clamp(20px,4vw,48px); background:#f8f7f2 }
+    .metro-line { width:clamp(64px,10vw,100px); height:clamp(64px,10vw,100px); flex:none; display:grid; place-items:center; border-radius:50%; background:#be418b; color:#fff; font-size:clamp(35px,6vw,58px); font-weight:800 }
+    .heading { min-width:0 }
+    .eyebrow { margin-bottom:5px; text-transform:uppercase; letter-spacing:.16em; color:#596273; font-size:clamp(10px,1.35vw,14px); font-weight:700 }
+    h1 { margin:0; font-size:clamp(29px,6.5vw,70px); letter-spacing:-.055em; line-height:.98; font-weight:800; white-space:nowrap }
+    .screen { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(260px,.9fr); min-height:clamp(270px,42vw,430px); background:#080d11; color:#f3f0e7; border-top:10px solid #172128 }
+    .arrivals { display:grid; grid-template-columns:1fr 1fr; align-content:center; padding:clamp(22px,4vw,52px) clamp(16px,3.8vw,46px); gap:0; position:relative }
+    .arrivals:after { content:""; position:absolute; left:50%; top:15%; bottom:15%; width:3px; background:#d7d7ce; opacity:.85 }
+    .arrival { padding:0 clamp(10px,2vw,25px); text-align:center; min-width:0 }
+    .ordinal { color:#e3e0d6; font-weight:700; font-size:clamp(13px,1.7vw,19px); margin-bottom:14px }
+    .minutes { color:var(--yellow); font-size:clamp(88px,18vw,190px); font-weight:800; letter-spacing:-.085em; line-height:.85; white-space:nowrap }
+    .unit { display:block; margin-top:14px; color:#d8d7d0; font-size:clamp(14px,2vw,21px); font-weight:700; text-transform:uppercase; letter-spacing:.12em }
+    .detail { display:block; min-height:2.6em; margin-top:18px; color:#e1dfd5; font-size:clamp(12px,1.6vw,17px); line-height:1.3 }
+    .notice { align-self:stretch; display:flex; flex-direction:column; justify-content:space-between; margin:clamp(18px,3vw,34px); padding:clamp(18px,3vw,30px); background:#e8eadc; color:#222a2c; border-radius:3px; }
+    .notice-head { display:flex; align-items:center; gap:10px; font-size:clamp(15px,2vw,21px); font-weight:800 }
+    .mini-line { display:inline-grid; place-items:center; min-width:38px; height:34px; padding:0 5px; border-radius:30px; background:var(--orange); color:#17191a; font-weight:900 }
+    .clock { margin-left:auto; padding:6px 9px; background:#172019; color:#f7d96a; font:700 clamp(15px,2.2vw,23px)/1.1 ui-monospace,monospace }
+    .notice-text { margin:22px 0; font-size:clamp(16px,2.1vw,23px); line-height:1.3 }
+    .status { display:flex; align-items:center; gap:9px; color:#3c6554; font-size:13px; font-weight:700 }
+    .status button { margin-left:auto; border:1px solid #748079; border-radius:4px; padding:7px 10px; background:transparent; color:#26352d; font:700 12px Arial,sans-serif; cursor:pointer }
+    .dot { width:9px; height:9px; border-radius:50%; background:var(--green); box-shadow:0 0 0 4px #51b78a25 }
+    .bottom { min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px clamp(18px,3vw,34px); background:var(--orange); color:#201b18; font-size:clamp(11px,1.5vw,15px); font-weight:700 }
+    .bottom a { color:inherit; text-underline-offset:3px }
+    .foot-right { font-variant-numeric:tabular-nums; white-space:nowrap }
+    dialog { width:min(480px,calc(100% - 28px)); border:0; border-radius:8px; padding:26px; box-shadow:0 20px 70px #0008; color:#17202a }
+    dialog::backdrop { background:#101820a8 }
+    dialog h2 { margin:0 0 10px; font-size:23px }
+    dialog p { line-height:1.45; color:#46505a }
+    dialog label { display:block; margin:18px 0 7px; font-weight:700; font-size:14px }
+    dialog input { width:100%; padding:12px; border:1px solid #a8afb5; border-radius:5px; font:15px Arial,sans-serif }
+    .dialog-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:20px }
+    .dialog-actions button { padding:10px 14px; border:0; border-radius:5px; cursor:pointer; font-weight:700 }
+    #saveKey { background:#d62828; color:white }
+    @media (max-width:700px) {
+      body { padding:0; background:#080d11; }
+      .board { width:100%; min-height:100svh; border:0; border-radius:0; display:flex; flex-direction:column; justify-content:center }
+      .top { min-height:100px; padding:18px }
+      .screen { flex:1; grid-template-columns:1fr; grid-template-rows:minmax(270px,1fr) auto; border-top-width:7px }
+      .arrivals { min-height:290px; padding:32px 10px 18px }
+      .notice { margin:0 14px 14px; min-height:150px }
+      .notice-text { margin:14px 0; }
+      .bottom { min-height:50px }
+    }
+    @media (prefers-reduced-motion:no-preference) { .dot { animation:pulse 2s infinite } }
+    @keyframes pulse { 50% { box-shadow:0 0 0 7px #51b78a12 } }
+  </style>
+</head>
+<body>
+  <main class="board" aria-label="Panneau d'information métro">
+    <header class="top">
+      <div class="metro-line" aria-label="ligne 8">8</div>
+      <div class="heading"><div class="eyebrow">Prochains passages · Métro</div><h1>Créteil–Université</h1></div>
+    </header>
+    <section class="screen" aria-label="Deux prochains métros vers Balard">
+      <div class="arrivals">
+        <article class="arrival"><div class="ordinal">1<sup>er</sup> métro</div><div class="minutes" id="m1">—</div><span class="unit" id="u1">min</span><span class="detail" id="d1">Balard</span></article>
+        <article class="arrival"><div class="ordinal">2<sup>e</sup> métro</div><div class="minutes" id="m2">—</div><span class="unit" id="u2">min</span><span class="detail" id="d2">Balard</span></article>
+      </div>
+      <aside class="notice">
+        <div class="notice-head"><span class="mini-line">8</span><span>Créteil–Université · vers Balard</span><time class="clock" id="clock">--:--</time></div>
+        <p class="notice-text" id="message">Affichage des deux prochains métros vers Balard.</p>
+        <div class="status"><span class="dot"></span><span id="status">Connexion IDF Mobilités à configurer</span><button id="openSettings" type="button">Configurer</button></div>
+      </aside>
+    </section>
+    <footer class="bottom"><span>Métro 8 · Créteil–Université → Balard</span><a href="https://paris-mobilites.fr/arret/creteil-universite" target="_blank" rel="noreferrer">Infos sur la station ↗</a><span class="foot-right">Actualisé <time id="updated">—</time></span></footer>
+  </main>
+  <dialog id="settings">
+    <form method="dialog" id="settingsForm">
+      <h2>Connexion Île-de-France Mobilités</h2>
+      <p>Collez votre clé API PRIM. Elle sera conservée dans le stockage local de ce navigateur et envoyée directement à l’API IDFM. Elle n’est pas inscrite dans le fichier HTML.</p>
+      <label for="apiKey">Clé API PRIM</label>
+      <input id="apiKey" type="password" autocomplete="off" placeholder="Votre clé API" required>
+      <div class="dialog-actions"><button type="button" id="removeKey">Supprimer la clé</button><button type="button" id="cancelSettings">Annuler</button><button id="saveKey" value="save">Enregistrer et connecter</button></div>
+    </form>
+  </dialog>
+  <script>
+    const API_URL = 'https://prim.iledefrance-mobilites.fr/marketplace/requete-ligne?LineRef=STIF%3ALine%3A%3AC01378%3A';
+    const API_KEY_NAME = 'idfm_prim_api_key';
+    const REFRESH_MS = 5000;
+    // Quai IDFM de Créteil–Université desservi vers Balard.
+    const CRETEIL_UNIVERSITE_BALARD_STOP = 'STIF:StopPoint:Q:463167:';
+    const $ = id => document.getElementById(id);
+    const dialog = $('settings');
+    const getKey = () => { try { return localStorage.getItem(API_KEY_NAME) || ''; } catch { return ''; } };
+    const asArray = value => value == null ? [] : Array.isArray(value) ? value : [value];
+    const textOf = value => asArray(value).map(item => typeof item === 'string' ? item : item?.value || '').join(' ').trim();
+    const normal = value => (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    let refreshInProgress = false;
+    function showError(message) { $('status').textContent = message; $('message').textContent = 'Les prochains métros vers Balard apparaîtront dès que la connexion IDFM répondra.'; }
+    function collectVisits(payload) {
+      const root = payload?.Siri?.ServiceDelivery || payload?.siri?.ServiceDelivery || payload?.ServiceDelivery || payload;
+      const deliveries = asArray(root?.EstimatedTimetableDelivery);
+      const journeys = deliveries.flatMap(delivery => asArray(delivery?.EstimatedJourneyVersionFrame))
+        .flatMap(frame => asArray(frame?.EstimatedVehicleJourney));
+      const found = [];
+      for (const journey of journeys) {
+        const direction = textOf(journey?.DirectionName);
+        if (!normal(direction).includes('balard')) continue;
+        const calls = asArray(journey?.EstimatedCalls?.EstimatedCall || journey?.EstimatedCall);
+        for (const call of calls) {
+          // La réponse SIRI de la ligne 8 identifie le quai par StopPointRef.
+          const stopRef = textOf(call?.StopPointRef);
+          if (stopRef !== CRETEIL_UNIVERSITE_BALARD_STOP) continue;
+          const date = call?.ExpectedDepartureTime || call?.ExpectedArrivalTime || call?.AimedDepartureTime || call?.AimedArrivalTime;
+          const timestamp = date ? Date.parse(date) : NaN;
+          if (!Number.isFinite(timestamp) || timestamp < Date.now() - 60000) continue;
+          const destination = textOf(call?.DestinationDisplay) || textOf(journey?.DestinationShortName) || textOf(journey?.DestinationName) || 'Balard';
+          found.push({ timestamp, destination: 'Balard' });
+        }
+      }
+      return found.sort((a,b) => a.timestamp - b.timestamp).slice(0,2);
+    }
+    function render(visits) {
+      if (!visits.length) { showError('Aucun métro vers Balard disponible'); return; }
+      visits.forEach((visit, index) => {
+        const remaining = Math.max(0, Math.ceil((visit.timestamp - Date.now()) / 60000));
+        $('m' + (index + 1)).textContent = String(remaining).padStart(2, '0');
+        $('u' + (index + 1)).textContent = remaining === 0 ? 'arrive' : 'minutes';
+        $('d' + (index + 1)).textContent = visit.destination;
+      });
+      if (visits.length === 1) { $('m2').textContent = '—'; $('u2').textContent = 'min'; }
+      $('status').textContent = 'Horaires IDFM · actualisation toutes les 5 s';
+      $('message').textContent = 'Prochains passages estimés du métro 8 en direction de Balard.';
+      $('updated').textContent = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    }
+    async function refresh() {
+      if (refreshInProgress) return;
+      const key = getKey();
+      if (!key) { showError('Connexion IDF Mobilités à configurer'); return; }
+      refreshInProgress = true;
+      $('status').textContent = 'Récupération des prochains passages…';
+      try {
+        const response = await fetch(API_URL, { headers: { 'Accept':'application/json', 'apikey':key } });
+        if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? 'Clé API refusée ou accès PRIM non activé' : `Erreur IDFM (${response.status})`);
+        render(collectVisits(await response.json()));
+      } catch (error) {
+        showError(error instanceof TypeError ? 'API inaccessible depuis ce navigateur' : error.message);
+      } finally {
+        refreshInProgress = false;
+      }
+    }
+    $('clock').textContent = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    setInterval(() => { $('clock').textContent = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); }, 1000);
+    $('openSettings').addEventListener('click', () => { $('apiKey').value = getKey(); dialog.showModal(); });
+    $('cancelSettings').addEventListener('click', () => dialog.close());
+    $('removeKey').addEventListener('click', () => { try { localStorage.removeItem(API_KEY_NAME); } catch {} $('apiKey').value = ''; dialog.close(); showError('Clé API supprimée de ce navigateur'); });
+    $('settingsForm').addEventListener('submit', event => {
+      event.preventDefault();
+      try { localStorage.setItem(API_KEY_NAME, $('apiKey').value.trim()); }
+      catch { showError('Stockage local indisponible dans ce navigateur'); dialog.close(); return; }
+      dialog.close(); refresh();
+    });
+    refresh();
+    setInterval(() => { if (!document.hidden) refresh(); }, REFRESH_MS);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+  </script>
+</body>
+</html>
