@@ -18,13 +18,16 @@
     .eyebrow { margin-bottom:5px; text-transform:uppercase; letter-spacing:.16em; color:#596273; font-size:clamp(10px,1.35vw,14px); font-weight:700 }
     h1 { margin:0; font-size:clamp(29px,6.5vw,70px); letter-spacing:-.055em; line-height:.98; font-weight:800; white-space:nowrap }
     .screen { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(260px,.9fr); min-height:clamp(270px,42vw,430px); background:#080d11; color:#f3f0e7; border-top:10px solid #172128 }
-    .arrivals { display:grid; grid-template-columns:1fr 1fr; align-content:center; padding:clamp(22px,4vw,52px) clamp(16px,3.8vw,46px); gap:0; position:relative }
+    .arrivals { display:grid; grid-template-columns:1fr 1fr; align-content:center; padding:clamp(22px,4vw,52px) clamp(10px,2vw,24px); gap:0; position:relative }
     .arrivals:after { content:""; position:absolute; left:50%; top:15%; bottom:15%; width:3px; background:#d7d7ce; opacity:.85 }
-    .arrival { padding:0 clamp(10px,2vw,25px); text-align:center; min-width:0 }
-    .ordinal { color:#e3e0d6; font-weight:700; font-size:clamp(13px,1.7vw,19px); margin-bottom:14px }
-    .minutes { color:var(--yellow); font-size:clamp(88px,18vw,190px); font-weight:800; letter-spacing:-.085em; line-height:.85; white-space:nowrap }
-    .unit { display:block; margin-top:14px; color:#d8d7d0; font-size:clamp(14px,2vw,21px); font-weight:700; text-transform:uppercase; letter-spacing:.12em }
-    .detail { display:block; min-height:2.6em; margin-top:18px; color:#e1dfd5; font-size:clamp(12px,1.6vw,17px); line-height:1.3 }
+    .direction { min-width:0; padding:0 clamp(10px,1.8vw,22px) }
+    .direction-title { min-height:2.5em; margin:0; color:#e3e0d6; text-align:center; font-size:clamp(13px,1.55vw,18px); line-height:1.25; font-weight:800; text-transform:uppercase }
+    .direction-times { display:grid; gap:clamp(16px,2vw,25px); margin-top:clamp(18px,2.5vw,28px) }
+    .arrival { display:grid; grid-template-columns:auto minmax(0,1fr); grid-template-rows:auto auto; align-items:center; column-gap:clamp(8px,1.4vw,16px); min-width:0 }
+    .ordinal { grid-column:1 / -1; color:#e3e0d6; font-weight:700; font-size:clamp(11px,1.25vw,14px); margin-bottom:4px }
+    .minutes { grid-column:1; grid-row:2 / 4; color:var(--yellow); font-size:clamp(48px,7.4vw,88px); font-weight:800; letter-spacing:-.085em; line-height:.9; white-space:nowrap }
+    .unit { align-self:end; color:#d8d7d0; font-size:clamp(11px,1.3vw,15px); font-weight:700; text-transform:uppercase; letter-spacing:.08em }
+    .detail { align-self:start; min-width:0; min-height:0; margin-top:4px; color:#e1dfd5; font-size:clamp(11px,1.25vw,14px); line-height:1.25 }
     .notice { align-self:stretch; display:flex; flex-direction:column; justify-content:space-between; margin:clamp(18px,3vw,34px); padding:clamp(18px,3vw,30px); background:#e8eadc; color:#222a2c; border-radius:3px; }
     .notice-head { display:flex; align-items:center; gap:10px; font-size:clamp(15px,2vw,21px); font-weight:800 }
     .mini-line { display:inline-grid; place-items:center; min-width:38px; height:34px; padding:0 5px; border-radius:30px; background:var(--orange); color:#17191a; font-weight:900 }
@@ -50,7 +53,11 @@
       .board { width:100%; min-height:100svh; border:0; border-radius:0; display:flex; flex-direction:column; justify-content:center }
       .top { min-height:100px; padding:18px }
       .screen { flex:1; grid-template-columns:1fr; grid-template-rows:minmax(270px,1fr) auto; border-top-width:7px }
-      .arrivals { min-height:290px; padding:32px 10px 18px }
+      .arrivals { min-height:290px; padding:24px 4px 18px }
+      .direction { padding:0 8px }
+      .direction-title { font-size:12px }
+      .direction-times { gap:18px; margin-top:18px }
+      .minutes { font-size:clamp(42px,8vw,58px) }
       .notice { margin:0 14px 14px; min-height:150px }
       .notice-text { margin:14px 0; }
       .bottom { min-height:50px }
@@ -65,14 +72,26 @@
       <img class="line-image" src="/logo-tvm.png" alt="Logo du TVM">
       <div class="heading"><div class="eyebrow">Prochains passages · Ligne de bus</div><h1>Église de Créteil</h1></div>
     </header>
-    <section class="screen" aria-label="Deux prochains bus TVM vers la Croix de Berny">
+    <section class="screen" aria-label="Prochains bus TVM dans les deux sens depuis Église de Créteil">
       <div class="arrivals">
-        <article class="arrival"><div class="ordinal">1<sup>er</sup> bus</div><div class="minutes" id="m1">—</div><span class="unit" id="u1">min</span><span class="detail" id="d1">Gare de la Croix de Berny</span></article>
-        <article class="arrival"><div class="ordinal">2<sup>e</sup> bus</div><div class="minutes" id="m2">—</div><span class="unit" id="u2">min</span><span class="detail" id="d2">Gare de la Croix de Berny</span></article>
+        <section class="direction" aria-label="Vers la Croix de Berny">
+          <h2 class="direction-title">Vers la Croix de Berny</h2>
+          <div class="direction-times">
+            <article class="arrival"><div class="ordinal">1<sup>er</sup> départ</div><div class="minutes" id="m-cb-1">—</div><span class="unit" id="u-cb-1">min</span><span class="detail" id="d-cb-1">TVM · Croix de Berny</span></article>
+            <article class="arrival"><div class="ordinal">2<sup>e</sup> départ</div><div class="minutes" id="m-cb-2">—</div><span class="unit" id="u-cb-2">min</span><span class="detail" id="d-cb-2">TVM · Croix de Berny</span></article>
+          </div>
+        </section>
+        <section class="direction" aria-label="Vers Saint-Maur–Créteil RER">
+          <h2 class="direction-title">Vers Saint-Maur–Créteil RER</h2>
+          <div class="direction-times">
+            <article class="arrival"><div class="ordinal">1<sup>er</sup> départ</div><div class="minutes" id="m-sm-1">—</div><span class="unit" id="u-sm-1">min</span><span class="detail" id="d-sm-1">TVM · Saint-Maur–Créteil RER</span></article>
+            <article class="arrival"><div class="ordinal">2<sup>e</sup> départ</div><div class="minutes" id="m-sm-2">—</div><span class="unit" id="u-sm-2">min</span><span class="detail" id="d-sm-2">TVM · Saint-Maur–Créteil RER</span></article>
+          </div>
+        </section>
       </div>
       <aside class="notice">
-        <div class="notice-head"><span class="mini-line">TVM</span><span>Église de Créteil · vers Croix de Berny</span><time class="clock" id="clock">--:--</time></div>
-        <p class="notice-text" id="message">Affichage des deux prochains passages vers la Croix de Berny.</p>
+        <div class="notice-head"><span class="mini-line">TVM</span><span>Église de Créteil · deux directions</span><time class="clock" id="clock">--:--</time></div>
+        <p class="notice-text" id="message">Affichage des deux prochains départs dans chaque direction.</p>
         <div class="status"><span class="dot"></span><span id="status">Connexion IDF Mobilités à configurer</span><button id="openSettings" type="button">Configurer</button></div>
       </aside>
     </section>
@@ -106,16 +125,20 @@
       const seconds = Math.floor((Date.now() - lastUpdatedAt) / 1000);
       $('updated').textContent = seconds < 5 ? 'à l’instant' : seconds < 60 ? `il y a ${seconds} s` : `il y a ${Math.floor(seconds / 60)} min${seconds % 60 ? ` ${seconds % 60} s` : ''}`;
     }
-    function showError(message) { $('status').textContent = message; $('message').textContent = 'Les prochains passages du TVM vers la Croix de Berny apparaîtront dès que la connexion IDFM répondra.'; }
+    function showError(message) { $('status').textContent = message; $('message').textContent = 'Les prochains départs TVM dans les deux sens apparaîtront dès que la connexion IDFM répondra.'; }
     function collectVisits(payload) {
       const root = payload?.Siri?.ServiceDelivery || payload?.siri?.ServiceDelivery || payload?.ServiceDelivery || payload;
       const deliveries = asArray(root?.EstimatedTimetableDelivery);
       const journeys = deliveries.flatMap(delivery => asArray(delivery?.EstimatedJourneyVersionFrame))
         .flatMap(frame => asArray(frame?.EstimatedVehicleJourney));
-      const found = [];
+      const found = { croix: [], saintMaur: [] };
       for (const journey of journeys) {
         const direction = textOf(journey?.DirectionName);
-        if (!normal(direction).includes('croix de berny')) continue;
+        const normalizedDirection = normal(direction);
+        const directionKey = normalizedDirection.includes('croix de berny') ? 'croix'
+          : normalizedDirection.includes('saint maur') || normalizedDirection.includes('saint maur creteil') ? 'saintMaur'
+          : null;
+        if (!directionKey) continue;
         const calls = asArray(journey?.EstimatedCalls?.EstimatedCall || journey?.EstimatedCall);
         for (const call of calls) {
           // Sur le TVM, la réponse peut donner le nom de l'arrêt plutôt que le quai ;
@@ -125,23 +148,29 @@
           const date = call?.ExpectedDepartureTime || call?.ExpectedArrivalTime || call?.AimedDepartureTime || call?.AimedArrivalTime;
           const timestamp = date ? Date.parse(date) : NaN;
           if (!Number.isFinite(timestamp) || timestamp < Date.now() - 60000) continue;
-          const destination = textOf(call?.DestinationDisplay) || textOf(journey?.DestinationShortName) || textOf(journey?.DestinationName) || 'Gare de la Croix de Berny';
-          found.push({ timestamp, destination });
+          const destination = directionKey === 'croix' ? 'Gare de la Croix de Berny' : 'Saint-Maur–Créteil RER';
+          found[directionKey].push({ timestamp, destination });
         }
       }
-      return found.sort((a,b) => a.timestamp - b.timestamp).slice(0,2);
+      for (const key of Object.keys(found)) found[key] = found[key].sort((a,b) => a.timestamp - b.timestamp).slice(0,2);
+      return found;
     }
-    function render(visits) {
-      if (!visits.length) { showError('Aucun passage TVM vers la Croix de Berny disponible'); return; }
-      visits.forEach((visit, index) => {
-        const remaining = Math.max(0, Math.ceil((visit.timestamp - Date.now()) / 60000));
-        $('m' + (index + 1)).textContent = String(remaining).padStart(2, '0');
-        $('u' + (index + 1)).textContent = remaining === 0 ? 'arrive' : 'minutes';
-        $('d' + (index + 1)).textContent = visit.destination;
-      });
-      if (visits.length === 1) { $('m2').textContent = '—'; $('u2').textContent = 'min'; }
+    function render(groups) {
+      for (const [key, prefix, destination] of [['croix','cb','Gare de la Croix de Berny'],['saintMaur','sm','Saint-Maur–Créteil RER']]) {
+        const visits = groups[key];
+        for (let index = 0; index < 2; index++) {
+          const visit = visits[index];
+          const id = `${prefix}-${index + 1}`;
+          if (!visit) { $('m-' + id).textContent = '—'; $('u-' + id).textContent = 'min'; $('d-' + id).textContent = `Aucun départ prévu vers ${destination}`; continue; }
+          const remaining = Math.max(0, Math.ceil((visit.timestamp - Date.now()) / 60000));
+          $('m-' + id).textContent = String(remaining).padStart(2, '0');
+          $('u-' + id).textContent = remaining === 0 ? 'arrive' : 'minutes';
+          $('d-' + id).textContent = visit.destination;
+        }
+      }
+      if (!groups.croix.length && !groups.saintMaur.length) { showError('Aucun départ TVM disponible à cet arrêt'); return; }
       $('status').textContent = 'Horaires IDFM · temps réel';
-      $('message').textContent = 'Prochains passages estimés du TVM en direction de la Gare de la Croix de Berny.';
+      $('message').textContent = 'Deux prochains départs affichés dans chaque sens depuis Église de Créteil.';
     }
     async function refresh() {
       if (refreshInProgress) return;
