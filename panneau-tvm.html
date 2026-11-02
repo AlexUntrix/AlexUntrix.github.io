@@ -7,7 +7,7 @@
   <link rel="apple-touch-icon" sizes="512x512" href="/apple-touch-icon-tvm.png">
   <title>Prochains bus · Église de Créteil · TVM</title>
   <style>
-    :root { color-scheme: light; --ink:#101b2a; --paper:#f4f1e8; --yellow:#f6c72e; --orange:#d62828; --green:#51b78a; }
+    :root { color-scheme: light; --ink:#101b2a; --paper:#f4f1e8; --yellow:#f6c72e; --line-blue:#122845; --green:#51b78a; }
     * { box-sizing:border-box }
     html,body { width:100%; min-height:100%; margin:0 }
     body { display:grid; place-items:center; background:#d9d7d0; padding:clamp(12px,3vw,42px); font-family:Arial,Helvetica,sans-serif; color:var(--ink) }
@@ -30,13 +30,13 @@
     .detail { align-self:start; min-width:0; min-height:0; margin-top:4px; color:#e1dfd5; font-size:clamp(11px,1.25vw,14px); line-height:1.25 }
     .notice { align-self:stretch; display:flex; flex-direction:column; justify-content:space-between; margin:clamp(18px,3vw,34px); padding:clamp(18px,3vw,30px); background:#e8eadc; color:#222a2c; border-radius:3px; }
     .notice-head { display:flex; align-items:center; gap:10px; font-size:clamp(15px,2vw,21px); font-weight:800 }
-    .mini-line { display:inline-grid; place-items:center; min-width:38px; height:34px; padding:0 5px; border-radius:30px; background:var(--orange); color:#17191a; font-weight:900 }
+    .mini-line { display:inline-grid; place-items:center; min-width:54px; height:38px; padding:0 10px; border-radius:8px; background:var(--line-blue); color:#fff; font-weight:900; font-size:16px }
     .clock { margin-left:auto; padding:6px 9px; background:#172019; color:#f7d96a; font:700 clamp(15px,2.2vw,23px)/1.1 ui-monospace,monospace }
     .notice-text { margin:22px 0; font-size:clamp(16px,2.1vw,23px); line-height:1.3 }
     .status { display:flex; align-items:center; gap:9px; color:#3c6554; font-size:13px; font-weight:700 }
     .status button { margin-left:auto; border:1px solid #748079; border-radius:4px; padding:7px 10px; background:transparent; color:#26352d; font:700 12px Arial,sans-serif; cursor:pointer }
     .dot { width:9px; height:9px; border-radius:50%; background:var(--green); box-shadow:0 0 0 4px #51b78a25 }
-    .bottom { min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px clamp(18px,3vw,34px); background:var(--orange); color:#201b18; font-size:clamp(11px,1.5vw,15px); font-weight:700 }
+    .bottom { min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px clamp(18px,3vw,34px); background:var(--line-blue); color:#fff; font-size:clamp(11px,1.5vw,15px); font-weight:700 }
     .bottom a { color:inherit; text-underline-offset:3px }
     .foot-right { font-variant-numeric:tabular-nums; white-space:nowrap }
     dialog { width:min(480px,calc(100% - 28px)); border:0; border-radius:8px; padding:26px; box-shadow:0 20px 70px #0008; color:#17202a }
@@ -47,7 +47,7 @@
     dialog input { width:100%; padding:12px; border:1px solid #a8afb5; border-radius:5px; font:15px Arial,sans-serif }
     .dialog-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:20px }
     .dialog-actions button { padding:10px 14px; border:0; border-radius:5px; cursor:pointer; font-weight:700 }
-    #saveKey { background:#d62828; color:white }
+    #saveKey { background:#122845; color:white }
     @media (max-width:700px) {
       body { padding:0; background:#080d11; }
       .board { width:100%; min-height:100svh; border:0; border-radius:0; display:flex; flex-direction:column; justify-content:center }
