@@ -109,7 +109,7 @@
   <script>
     const API_URL = 'https://prim.iledefrance-mobilites.fr/marketplace/requete-ligne?LineRef=STIF%3ALine%3A%3AC01071%3A';
     const API_KEY_NAME = 'idfm_prim_api_key';
-    const REFRESH_MS = 17000;
+    const REFRESH_MS = 90000;
     // Quais TVM de l'arrêt Église de Créteil, un identifiant par direction.
     const STOP_REFS = {
       croix: 'STIF:StopPoint:Q:26539:',
@@ -123,6 +123,19 @@
     const normal = value => (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     let refreshInProgress = false;
     let lastUpdatedAt = null;
+    let quotaBlockedUntil = 0;
+    function quotaRetryTime(response) {
+      const retryAfter = response.headers.get('Retry-After');
+      if (retryAfter) {
+        const seconds = Number(retryAfter);
+        const parsedDate = Date.parse(retryAfter);
+        if (Number.isFinite(seconds) && seconds > 0) return Date.now() + seconds * 1000;
+        if (Number.isFinite(parsedDate) && parsedDate > Date.now()) return parsedDate;
+      }
+      const reset = Number(response.headers.get('RateLimit-Reset') || response.headers.get('X-RateLimit-Reset'));
+      if (Number.isFinite(reset) && reset > 0) return reset > 1e12 ? reset : reset > 1e9 ? reset * 1000 : Date.now() + reset * 1000;
+      const tomorrow = new Date(); tomorrow.setHours(24, 1, 0, 0); return tomorrow.getTime();
+    }
     function updateElapsed() {
       if (!lastUpdatedAt) { $('updated').textContent = '—'; return; }
       const seconds = Math.floor((Date.now() - lastUpdatedAt) / 1000);
@@ -175,12 +188,19 @@
     }
     async function refresh() {
       if (refreshInProgress) return;
+      if (Date.now() < quotaBlockedUntil) return;
       const key = getKey();
       if (!key) { showError('Connexion IDF Mobilités à configurer'); return; }
       refreshInProgress = true;
       $('status').textContent = 'Récupération des prochains passages…';
       try {
         const response = await fetch(API_URL, { headers: { 'Accept':'application/json', 'apikey':key } });
+        if (response.status === 429) {
+          quotaBlockedUntil = quotaRetryTime(response);
+          $('status').textContent = 'Quota IDFM atteint (429)';
+          $('message').textContent = `Quota atteint. Nouvel essai après ${new Date(quotaBlockedUntil).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}.`;
+          return;
+        }
         if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? 'Clé API refusée ou accès PRIM non activé' : `Erreur IDFM (${response.status})`);
         const payload = await response.json();
         lastUpdatedAt = Date.now();
